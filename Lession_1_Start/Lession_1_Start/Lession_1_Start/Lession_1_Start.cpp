@@ -9,7 +9,7 @@
 int main()
 {
     osgViewer::Viewer viewer;
-    viewer.setSceneData(osgDB::readNodeFile("cow.osg"));
+    viewer.setSceneData(osgDB::readNodeFile("osgData/cow.osg"));
     return viewer.run();
 }
 
