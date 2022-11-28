@@ -11,6 +11,7 @@
 #include <osgUtil/SmoothingVisitor>
 #include <osg/LineWidth>
 #include <osg/DrawPixels>
+#include <osgText/Text>
 
 int main()
 {
@@ -26,10 +27,18 @@ int main()
     imageDrawable3->setPosition(osg::Vec3(200.0, 0.0, 0.0));
     imageDrawable3->setImage(osgDB::readImageFile("osgData/images/osg256.png"));
 
+    osg::ref_ptr<osgText::Text> text = new osgText::Text;
+    text->setFont("osgData/fonts/arial.ttf");
+    text->setText("Hello World!");
+    text->setPosition(osg::Vec3(0.0, 0.0, 0.0));
+    text->setColor(osg::Vec4(1.0, 0.0, 0.0, 1.0));
+    text->setAxisAlignment(osgText::Text::XZ_PLANE);
+
     osg::ref_ptr<osg::Geode> geode = new osg::Geode;
-    geode->addDrawable(imageDrawable1.get());
-    geode->addDrawable(imageDrawable2.get());
-    geode->addDrawable(imageDrawable3.get());
+    //geode->addDrawable(imageDrawable1.get());
+    //geode->addDrawable(imageDrawable2.get());
+    //geode->addDrawable(imageDrawable3.get());
+    geode->addDrawable(text);
 
     osgViewer::Viewer viewer;
     viewer.setSceneData(geode.get());
