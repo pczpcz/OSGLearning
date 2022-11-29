@@ -16,10 +16,32 @@
 #include <osg/ShapeDrawable>
 #include <osg/TexGen>
 
+osg::Image* CreateMipmap(unsigned int resolution)
+{
+	osg::ref_ptr<osg::Image> image = osgDB::readImageFile("osgData/images/clockface.jpg");
+	unsigned int totalSize = 0;
+	osg::Image::MipmapDataType mipmapData;
+
+	int width = image->s();
+	int height = image->t();
+	int res = std::min(width, height);
+
+	for (; res > 0; res >>= 1)
+	{
+		mipmapData.push_back(totalSize);
+	}
+
+	image->setMipmapLevels(mipmapData);
+
+	return image.release();
+}
+
 void CreateTexture2D(osg::StateSet& ss) 
 {
 	osg::ref_ptr<osg::Texture2D> texture = new osg::Texture2D;
-	texture->setImage(osgDB::readImageFile("osgData/images/clockface.jpg"));
+	
+	//texture->setImage(osgDB::readImageFile("osgData/images/clockface.jpg"));
+	texture->setImage(CreateMipmap(32));
 	texture->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
 	texture->setWrap(osg::Texture::WRAP_T, osg::Texture::REPEAT);
 	texture->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR);
