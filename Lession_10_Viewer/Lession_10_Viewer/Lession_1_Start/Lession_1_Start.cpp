@@ -16,6 +16,7 @@
 #include <osg/ShapeDrawable>
 #include <osg/TexGen>
 #include <osg/Camera>
+#include <osgViewer/CompositeViewer>
 
 osg::Camera *CreateCamera(int x, int y, int width, int height) 
 {
@@ -37,26 +38,45 @@ osg::Camera *CreateCamera(int x, int y, int width, int height)
 
 int main()
 {
-	osg::ref_ptr<osg::Node> node = osgDB::readNodeFile("osgData/cow.osg");
+	osg::ref_ptr<osg::Node> node1 = osgDB::readNodeFile("osgData/cow.osg");
+	osg::ref_ptr<osg::Node> node2 = osgDB::readNodeFile("osgData/cessna.osg");
+	osg::ref_ptr<osg::Node> node3 = osgDB::readNodeFile("osgData/axes.osg");
 
+
+	//1. 单视景器
+	/*TODO：投影矩阵平移方向，正负号没有太明白
 	osgViewer::Viewer viewer;
 
-	//TODO：投影矩阵平移方向，正负号没有太明白
-
-	/*
 	viewer.addSlave(CreateCamera(100, 100, 400, 300), osg::Matrixd::translate(0.5, -0.5, 0.0), osg::Matrixd());		//左上角为原点
 	viewer.addSlave(CreateCamera(505, 100, 400, 300), osg::Matrixd::translate(-0.5, -0.5, 0.0), osg::Matrixd());	//左上角为原点
 	viewer.addSlave(CreateCamera(100, 405, 400, 300), osg::Matrixd::translate(0.5, 0.5, 0.0), osg::Matrixd());		//左上角为原点
 	viewer.addSlave(CreateCamera(505, 405, 400, 300), osg::Matrixd::translate(-0.5, 0.5, 0.0), osg::Matrixd());		//左上角为原点
-	*/
 
 	viewer.addSlave(CreateCamera(100, 100, 400, 300), osg::Matrixd::translate(1.0, -1.0, 0.0), osg::Matrixd());		//左上角为原点
 	viewer.addSlave(CreateCamera(505, 100, 400, 300), osg::Matrixd::translate(-1.0, -1.0, 0.0), osg::Matrixd());	//左上角为原点
 	viewer.addSlave(CreateCamera(100, 405, 400, 300), osg::Matrixd::translate(1.0, 1.0, 0.0), osg::Matrixd());		//左上角为原点
 	viewer.addSlave(CreateCamera(505, 405, 400, 300), osg::Matrixd::translate(-1.0, 1.0, 0.0), osg::Matrixd());		//左上角为原点
 
-	viewer.setSceneData(node.get());
+	viewer.setSceneData(node1.get());
 	return viewer.run();
+	*/
+
+	//2. 多视景器
+	osg::ref_ptr<osgViewer::View> view1 = new osgViewer::View;
+	osg::ref_ptr<osgViewer::View> view2 = new osgViewer::View;
+	osg::ref_ptr<osgViewer::View> view3 = new osgViewer::View;
+	view1->setUpViewInWindow(100, 100, 200, 200);
+	view2->setUpViewInWindow(305, 100, 200, 200);
+	view3->setUpViewInWindow(510, 100, 200, 200);
+	view1->setSceneData(node1.get());
+	view2->setSceneData(node2.get());
+	view3->setSceneData(node3.get());
+
+	osgViewer::CompositeViewer multiViewer;
+	multiViewer.addView(view1.get());
+	multiViewer.addView(view2.get());
+	multiViewer.addView(view3.get());
+	return multiViewer.run();
 }
 
 // 运行程序: Ctrl + F5 或调试 >“开始执行(不调试)”菜单
